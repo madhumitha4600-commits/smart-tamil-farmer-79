@@ -2,94 +2,61 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Noto+Sans+Tamil:wght@300;400;500;600;700&display=swap');
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 80 25% 97%;
+    --foreground: 150 30% 10%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 80 20% 99%;
+    --card-foreground: 150 30% 10%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 80 20% 99%;
+    --popover-foreground: 150 30% 10%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 142 50% 28%;
+    --primary-foreground: 80 25% 97%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 42 70% 55%;
+    --secondary-foreground: 150 30% 10%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 80 15% 92%;
+    --muted-foreground: 150 10% 40%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 142 35% 90%;
+    --accent-foreground: 142 50% 20%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 80 15% 85%;
+    --input: 80 15% 85%;
+    --ring: 142 50% 28%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
+
+    --earth: 30 40% 30%;
+    --earth-foreground: 40 30% 95%;
+    --gold: 42 80% 50%;
+    --gold-foreground: 42 80% 10%;
+    --leaf: 100 45% 40%;
+    --leaf-light: 100 40% 92%;
+    --sky: 200 60% 50%;
+
+    --gradient-hero: linear-gradient(135deg, hsl(142 50% 28%), hsl(100 45% 40%));
+    --gradient-gold: linear-gradient(135deg, hsl(42 80% 50%), hsl(30 70% 45%));
+    --gradient-earth: linear-gradient(135deg, hsl(30 40% 30%), hsl(142 50% 28%));
+    --shadow-card: 0 4px 20px -4px hsl(142 50% 28% / 0.12);
+    --shadow-elevated: 0 12px 40px -8px hsl(142 50% 28% / 0.2);
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
@@ -100,6 +67,66 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+    font-family: 'Poppins', 'Noto Sans Tamil', sans-serif;
   }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', 'Noto Sans Tamil', sans-serif;
+    @apply font-bold;
+  }
+}
+
+@layer components {
+  .hero-gradient-overlay {
+    background: linear-gradient(
+      to bottom,
+      hsl(142 50% 28% / 0.6) 0%,
+      hsl(142 50% 28% / 0.3) 50%,
+      hsl(30 40% 30% / 0.7) 100%
+    );
+  }
+
+  .feature-card-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .feature-card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-elevated);
+  }
+
+  .crop-card {
+    @apply rounded-xl overflow-hidden cursor-pointer;
+    transition: all 0.3s ease;
+  }
+  .crop-card:hover {
+    transform: scale(1.03);
+    box-shadow: var(--shadow-elevated);
+  }
+
+  .section-title {
+    @apply text-3xl md:text-4xl font-bold text-center mb-2;
+  }
+
+  .section-subtitle {
+    @apply text-muted-foreground text-center text-lg mb-12 max-w-2xl mx-auto;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
 }
