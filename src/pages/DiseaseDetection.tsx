@@ -3,8 +3,10 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { Upload, Camera, Loader2, AlertTriangle, CheckCircle } from "lucide-react";
+import { Upload, Camera, Loader2, AlertTriangle, CheckCircle, Shield, Info } from "lucide-react";
 import { crops } from "@/data/crops";
+import { motion } from "framer-motion";
+import diseaseLeafImg from "@/assets/disease-leaf.jpg";
 
 const diseaseDatabase: Record<string, { disease: string; diseaseTa: string; crop: string; cropTa: string; remedy: string; remedyTa: string }[]> = {
   apple: [
@@ -43,7 +45,6 @@ const DiseaseDetection = () => {
   const analyze = () => {
     if (!image) return;
     setAnalyzing(true);
-    // Simulate AI analysis
     setTimeout(() => {
       const cropKey = selectedCrop || "tomato";
       const diseases = diseaseDatabase[cropKey] || diseaseDatabase["tomato"];
@@ -56,17 +57,58 @@ const DiseaseDetection = () => {
   return (
     <div className="min-h-screen">
       <Navbar />
-      <div className="pt-20 pb-8 px-4">
-        <div className="container mx-auto max-w-3xl">
-          <h1 className="section-title text-foreground mt-8">
-            {t("Plant Disease Detection", "தாவர நோய் கண்டறிதல்")}
-          </h1>
-          <p className="section-subtitle">
-            {t(
-              "Upload a photo of a diseased leaf to identify the disease and get treatment recommendations.",
-              "நோயைக் கண்டறிந்து சிகிச்சை பரிந்துரைகளைப் பெற நோயுற்ற இலையின் புகைப்படத்தை பதிவேற்றவும்."
-            )}
-          </p>
+
+      {/* Hero Banner */}
+      <section className="relative pt-16 overflow-hidden">
+        <div className="relative h-64 md:h-72">
+          <img src={diseaseLeafImg} alt="Disease detection" className="absolute inset-0 w-full h-full object-cover" loading="eager" />
+          <div className="absolute inset-0 bg-destructive/50" />
+          <div className="relative z-10 h-full flex flex-col items-center justify-center px-4 text-center">
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-3xl md:text-5xl font-extrabold text-primary-foreground mb-4"
+            >
+              {t("Plant Disease Detection", "தாவர நோய் கண்டறிதல்")}
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-primary-foreground/90 text-lg max-w-2xl"
+            >
+              {t(
+                "Upload a photo of a diseased leaf to identify the disease and get treatment recommendations.",
+                "நோயைக் கண்டறிந்து சிகிச்சை பரிந்துரைகளைப் பெற நோயுற்ற இலையின் புகைப்படத்தை பதிவேற்றவும்."
+              )}
+            </motion.p>
+          </div>
+        </div>
+      </section>
+
+      <div className="px-4 pb-8">
+        <div className="container mx-auto max-w-4xl">
+
+          {/* How it works */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-10 mb-10">
+            {[
+              { icon: Upload, en: "Upload Leaf Image", ta: "இலைப் படத்தை பதிவேற்றவும்", desc: t("Take a clear photo of the affected leaf", "பாதிக்கப்பட்ட இலையின் தெளிவான புகைப்படத்தை எடுங்கள்") },
+              { icon: Shield, en: "AI Analysis", ta: "AI பகுப்பாய்வு", desc: t("Our system analyzes the image patterns", "எங்கள் அமைப்பு பட வடிவங்களை பகுப்பாய்வு செய்கிறது") },
+              { icon: CheckCircle, en: "Get Treatment", ta: "சிகிச்சை பெறுங்கள்", desc: t("Receive diagnosis and treatment plan", "நோய் கண்டறிதல் மற்றும் சிகிச்சை திட்டத்தைப் பெறுங்கள்") },
+            ].map((step, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                className="bg-card border border-border rounded-xl p-5 text-center"
+              >
+                <step.icon className="h-8 w-8 text-primary mx-auto mb-3" />
+                <h3 className="font-semibold text-sm text-foreground mb-1">{t(step.en, step.ta)}</h3>
+                <p className="text-xs text-muted-foreground">{step.desc}</p>
+              </motion.div>
+            ))}
+          </div>
 
           {/* Crop Selection */}
           <div className="mb-6">
@@ -76,7 +118,7 @@ const DiseaseDetection = () => {
             <select
               value={selectedCrop}
               onChange={(e) => setSelectedCrop(e.target.value)}
-              className="w-full p-3 rounded-lg border border-border bg-card text-foreground"
+              className="w-full p-3 rounded-xl border border-border bg-card text-foreground focus:ring-2 focus:ring-primary/50 transition-all"
             >
               <option value="">{t("Auto-detect", "தானாகக் கண்டறி")}</option>
               {crops.map((c) => (
@@ -86,29 +128,32 @@ const DiseaseDetection = () => {
           </div>
 
           {/* Upload Area */}
-          <div
+          <motion.div
+            whileHover={{ scale: 1.01 }}
             onClick={() => fileRef.current?.click()}
-            className="border-2 border-dashed border-border rounded-xl p-8 text-center cursor-pointer hover:border-primary transition-colors bg-card"
+            className="border-2 border-dashed border-border rounded-2xl p-10 text-center cursor-pointer hover:border-primary/50 transition-all bg-card group"
           >
             {image ? (
-              <img src={image} alt="Uploaded leaf" className="max-h-64 mx-auto rounded-lg object-contain" />
+              <img src={image} alt="Uploaded leaf" className="max-h-72 mx-auto rounded-xl object-contain shadow-lg" />
             ) : (
-              <div className="space-y-3">
-                <Upload className="h-12 w-12 mx-auto text-muted-foreground" />
-                <p className="text-muted-foreground">{t("Click or drag to upload a leaf image", "இலைப் படத்தை பதிவேற்ற கிளிக் செய்யவும்")}</p>
-                <p className="text-xs text-muted-foreground">{t("Supports JPG, PNG, WEBP", "JPG, PNG, WEBP ஆதரிக்கப்படுகிறது")}</p>
+              <div className="space-y-4">
+                <div className="w-16 h-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Upload className="h-8 w-8 text-primary" />
+                </div>
+                <p className="text-foreground font-medium">{t("Click or drag to upload a leaf image", "இலைப் படத்தை பதிவேற்ற கிளிக் செய்யவும்")}</p>
+                <p className="text-xs text-muted-foreground">{t("Supports JPG, PNG, WEBP — Max 10MB", "JPG, PNG, WEBP ஆதரிக்கப்படுகிறது — அதிகபட்சம் 10MB")}</p>
               </div>
             )}
             <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleUpload} />
-          </div>
+          </motion.div>
 
           {image && (
-            <div className="mt-4 flex gap-3 justify-center">
-              <Button onClick={analyze} disabled={analyzing} className="gap-2">
-                {analyzing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
+            <div className="mt-6 flex gap-3 justify-center">
+              <Button onClick={analyze} disabled={analyzing} className="gap-2 px-8 py-6 text-lg rounded-xl">
+                {analyzing ? <Loader2 className="h-5 w-5 animate-spin" /> : <Camera className="h-5 w-5" />}
                 {analyzing ? t("Analyzing...", "பகுப்பாய்வு...") : t("Analyze Disease", "நோயை பகுப்பாய்வு செய்")}
               </Button>
-              <Button variant="outline" onClick={() => { setImage(null); setResult(null); }}>
+              <Button variant="outline" onClick={() => { setImage(null); setResult(null); }} className="px-6 py-6 rounded-xl">
                 {t("Clear", "அழி")}
               </Button>
             </div>
@@ -116,23 +161,33 @@ const DiseaseDetection = () => {
 
           {/* Result */}
           {result && (
-            <div className="mt-8 space-y-4 animate-fade-in-up">
-              <div className="bg-destructive/5 border border-destructive/20 rounded-xl p-6">
-                <div className="flex items-center gap-2 mb-3">
-                  <AlertTriangle className="h-5 w-5 text-destructive" />
-                  <h3 className="font-bold text-foreground">{t("Disease Detected", "நோய் கண்டறியப்பட்டது")}</h3>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-8 space-y-4"
+            >
+              <div className="bg-destructive/5 border-2 border-destructive/20 rounded-2xl p-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-destructive/10 rounded-xl flex items-center justify-center">
+                    <AlertTriangle className="h-6 w-6 text-destructive" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg text-foreground">{t("Disease Detected", "நோய் கண்டறியப்பட்டது")}</h3>
+                    <p className="text-sm text-muted-foreground">{t("Crop:", "பயிர்:")} {t(result.crop, result.cropTa)}</p>
+                  </div>
                 </div>
-                <p className="text-lg font-semibold text-destructive mb-1">{t(result.disease, result.diseaseTa)}</p>
-                <p className="text-sm text-muted-foreground">{t("Crop:", "பயிர்:")} {t(result.crop, result.cropTa)}</p>
+                <p className="text-2xl font-bold text-destructive">{t(result.disease, result.diseaseTa)}</p>
               </div>
-              <div className="bg-accent/50 border border-border rounded-xl p-6">
-                <div className="flex items-center gap-2 mb-3">
-                  <CheckCircle className="h-5 w-5 text-primary" />
-                  <h3 className="font-bold text-foreground">{t("Recommended Treatment", "பரிந்துரைக்கப்பட்ட சிகிச்சை")}</h3>
+              <div className="bg-accent/50 border-2 border-primary/20 rounded-2xl p-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                    <CheckCircle className="h-6 w-6 text-primary" />
+                  </div>
+                  <h3 className="font-bold text-lg text-foreground">{t("Recommended Treatment", "பரிந்துரைக்கப்பட்ட சிகிச்சை")}</h3>
                 </div>
-                <p className="text-sm text-muted-foreground">{t(result.remedy, result.remedyTa)}</p>
+                <p className="text-muted-foreground leading-relaxed">{t(result.remedy, result.remedyTa)}</p>
               </div>
-            </div>
+            </motion.div>
           )}
         </div>
       </div>

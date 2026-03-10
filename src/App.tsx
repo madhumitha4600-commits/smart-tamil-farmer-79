@@ -12,6 +12,7 @@ import WeatherForecast from "./pages/WeatherForecast.tsx";
 import FertilizerRecommendation from "./pages/FertilizerRecommendation.tsx";
 import CropRecommendation from "./pages/CropRecommendation.tsx";
 import FarmerProfile from "./pages/FarmerProfile.tsx";
+import ChatAssistant from "./pages/ChatAssistant.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/fertilizer" element={<FertilizerRecommendation />} />
             <Route path="/crop-recommendation" element={<CropRecommendation />} />
             <Route path="/profile" element={<FarmerProfile />} />
+            <Route path="/chat" element={<ChatAssistant />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

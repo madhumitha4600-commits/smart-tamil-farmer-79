@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Menu, X, User, Globe } from "lucide-react";
+import { Menu, X, User, Globe, MessageCircle } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -19,11 +19,11 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-card/90 backdrop-blur-md border-b border-border shadow-sm">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-lg border-b border-border shadow-sm">
       <div className="container mx-auto px-4 flex items-center justify-between h-16">
         <Link to="/" className="flex items-center gap-2 font-bold text-xl text-primary">
           <span className="text-2xl">🌾</span>
-          <span>{t("AgriSmart", "அக்ரிஸ்மார்ட்")}</span>
+          <span className="tracking-tight">{t("AgriSync", "அக்ரிசிங்க்")}</span>
         </Link>
 
         {/* Desktop nav */}
@@ -32,10 +32,10 @@ const Navbar = () => {
             <Link
               key={link.to}
               to={link.to}
-              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                 location.pathname === link.to
-                  ? "bg-primary text-primary-foreground"
-                  : "text-foreground hover:bg-accent"
+                  ? "bg-primary text-primary-foreground shadow-md"
+                  : "text-foreground hover:bg-accent hover:scale-105"
               }`}
             >
               {link.label}
@@ -44,6 +44,13 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-2">
+          <Link to="/chat">
+            <Button variant="outline" size="sm" className="gap-1 border-primary/30 text-primary hover:bg-primary hover:text-primary-foreground transition-all">
+              <MessageCircle className="h-4 w-4" />
+              <span className="hidden sm:inline">{t("AI Chat", "AI அரட்டை")}</span>
+            </Button>
+          </Link>
+
           <Button
             variant="outline"
             size="sm"
@@ -63,7 +70,7 @@ const Navbar = () => {
 
           {/* Mobile toggle */}
           <button
-            className="lg:hidden p-2 rounded-lg hover:bg-accent"
+            className="lg:hidden p-2 rounded-lg hover:bg-accent transition-colors"
             onClick={() => setOpen(!open)}
           >
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -73,7 +80,7 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       {open && (
-        <div className="lg:hidden bg-card border-b border-border px-4 py-3 space-y-1">
+        <div className="lg:hidden bg-card border-b border-border px-4 py-3 space-y-1 animate-fade-in-up">
           {links.map((link) => (
             <Link
               key={link.to}
@@ -88,6 +95,9 @@ const Navbar = () => {
               {link.label}
             </Link>
           ))}
+          <Link to="/chat" onClick={() => setOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-medium text-primary hover:bg-accent">
+            💬 {t("AI Chat Assistant", "AI அரட்டை உதவியாளர்")}
+          </Link>
         </div>
       )}
     </nav>
