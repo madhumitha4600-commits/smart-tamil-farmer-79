@@ -14,7 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Poppins', 'Noto Sans Tamil', 'sans-serif'],
+        display: ['Cormorant Garamond', 'Noto Sans Tamil', 'serif'],
+        body: ['DM Sans', 'Noto Sans Tamil', 'sans-serif'],
         tamil: ['Noto Sans Tamil', 'sans-serif'],
       },
       colors: {
@@ -64,6 +65,11 @@ export default {
           light: "hsl(var(--leaf-light))",
         },
         sky: "hsl(var(--sky))",
+        obsidian: "hsl(var(--obsidian))",
+        forest: "hsl(var(--forest))",
+        canopy: "hsl(var(--canopy))",
+        moss: "hsl(var(--moss))",
+        sage: "hsl(var(--sage))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",

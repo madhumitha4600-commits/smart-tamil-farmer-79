@@ -13,6 +13,8 @@ import FertilizerRecommendation from "./pages/FertilizerRecommendation.tsx";
 import CropRecommendation from "./pages/CropRecommendation.tsx";
 import FarmerProfile from "./pages/FarmerProfile.tsx";
 import ChatAssistant from "./pages/ChatAssistant.tsx";
+import SoilHealthCard from "./pages/SoilHealthCard.tsx";
+import CropCalendar from "./pages/CropCalendar.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -32,6 +34,8 @@ const App = () => (
             <Route path="/weather" element={<WeatherForecast />} />
             <Route path="/fertilizer" element={<FertilizerRecommendation />} />
             <Route path="/crop-recommendation" element={<CropRecommendation />} />
+            <Route path="/soil-health" element={<SoilHealthCard />} />
+            <Route path="/crop-calendar" element={<CropCalendar />} />
             <Route path="/profile" element={<FarmerProfile />} />
             <Route path="/chat" element={<ChatAssistant />} />
             <Route path="*" element={<NotFound />} />

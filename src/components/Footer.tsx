@@ -5,46 +5,52 @@ const Footer = () => {
   const { t } = useLanguage();
 
   return (
-    <footer className="bg-primary text-primary-foreground py-12 mt-16">
+    <footer className="bg-primary text-primary-foreground py-16 mt-16">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-2">
-            <h3 className="text-xl font-bold mb-3 flex items-center gap-2">
+            <h3 className="text-2xl font-display font-bold mb-3 flex items-center gap-2">
               <span>🌾</span> {t("AgriSync", "அக்ரிசிங்க்")}
             </h3>
-            <p className="text-primary-foreground/80 text-sm mb-4">
+            <p className="text-primary-foreground/80 text-sm font-body mb-6 max-w-md leading-relaxed">
               {t(
-                "AI-powered smart farming assistant for better crop management, disease detection, and higher yields. Empowering farmers with cutting-edge technology.",
-                "சிறந்த பயிர் மேலாண்மை, நோய் கண்டறிதல் மற்றும் அதிக மகசூலுக்கான AI சக்தி வாய்ந்த ஸ்மார்ட் விவசாய உதவியாளர்."
+                "AI-powered smart farming assistant for Tamil Nadu farmers. Better crop management, disease detection, and higher yields through cutting-edge technology.",
+                "தமிழ்நாடு விவசாயிகளுக்கான AI சக்தி வாய்ந்த ஸ்மார்ட் விவசாய உதவியாளர். நவீன தொழில்நுட்பத்தின் மூலம் சிறந்த பயிர் மேலாண்மை, நோய் கண்டறிதல் மற்றும் அதிக மகசூல்."
               )}
             </p>
-            <div className="text-xs text-primary-foreground/60">
-              <p className="font-semibold mb-1">{t("Developed by", "உருவாக்கியவர்கள்")}</p>
-              <p>MADHUMITHA A • AATHIKA N M • ARUNI B • KOWSALYA M</p>
+            <div className="text-xs text-primary-foreground/50">
+              <p className="font-semibold font-body mb-1.5">{t("Developed by", "உருவாக்கியவர்கள்")}</p>
+              <div className="flex flex-wrap gap-x-3 gap-y-1 font-body">
+                {["MADHUMITHA A", "AATHIKA N M", "ARUNI B", "KOWSALYA M"].map(name => (
+                  <span key={name} className="text-primary-foreground/70">{name}</span>
+                ))}
+              </div>
             </div>
           </div>
           <div>
-            <h4 className="font-semibold mb-3">{t("Quick Links", "விரைவு இணைப்புகள்")}</h4>
-            <ul className="space-y-2 text-sm text-primary-foreground/80">
+            <h4 className="font-display font-semibold mb-4 text-lg">{t("Modules", "தொகுதிகள்")}</h4>
+            <ul className="space-y-2 text-sm font-body text-primary-foreground/70">
               <li><Link to="/farming-guide" className="hover:text-primary-foreground transition-colors">{t("Farming Guide", "விவசாய வழிகாட்டி")}</Link></li>
               <li><Link to="/disease-detection" className="hover:text-primary-foreground transition-colors">{t("Disease Detection", "நோய் கண்டறிதல்")}</Link></li>
-              <li><Link to="/weather" className="hover:text-primary-foreground transition-colors">{t("Weather Forecast", "வானிலை முன்னறிவிப்பு")}</Link></li>
-              <li><Link to="/crop-recommendation" className="hover:text-primary-foreground transition-colors">{t("Crop Recommendation", "பயிர் பரிந்துரை")}</Link></li>
-              <li><Link to="/chat" className="hover:text-primary-foreground transition-colors">{t("AI Assistant", "AI உதவியாளர்")}</Link></li>
+              <li><Link to="/weather" className="hover:text-primary-foreground transition-colors">{t("Weather Forecast", "வானிலை")}</Link></li>
+              <li><Link to="/fertilizer" className="hover:text-primary-foreground transition-colors">{t("Fertilizer", "உரம்")}</Link></li>
+              <li><Link to="/soil-health" className="hover:text-primary-foreground transition-colors">{t("Soil Health", "மண் ஆரோக்கியம்")}</Link></li>
+              <li><Link to="/crop-calendar" className="hover:text-primary-foreground transition-colors">{t("Crop Calendar", "நாட்காட்டி")}</Link></li>
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold mb-3">{t("Contact", "தொடர்பு")}</h4>
-            <p className="text-sm text-primary-foreground/80">
-              {t("Email: support@agrisync.com", "மின்னஞ்சல்: support@agrisync.com")}
-            </p>
-            <p className="text-sm text-primary-foreground/80 mt-1">
-              {t("Phone: +91 98765 43210", "தொலைபேசி: +91 98765 43210")}
-            </p>
+            <h4 className="font-display font-semibold mb-4 text-lg">{t("Contact", "தொடர்பு")}</h4>
+            <p className="text-sm font-body text-primary-foreground/70">support@agrisync.com</p>
+            <p className="text-sm font-body text-primary-foreground/70 mt-1">+91 98765 43210</p>
+            <div className="flex gap-3 mt-4">
+              {["📘", "🐦", "📷", "📺"].map((emoji, i) => (
+                <span key={i} className="text-lg cursor-pointer hover:scale-125 transition-transform">{emoji}</span>
+              ))}
+            </div>
           </div>
         </div>
-        <div className="mt-8 pt-8 border-t border-primary-foreground/20 text-center text-sm text-primary-foreground/60">
-          © 2026 AgriSync. {t("All rights reserved.", "அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை.")}
+        <div className="mt-10 pt-8 border-t border-primary-foreground/15 text-center text-xs font-body text-primary-foreground/50">
+          © 2026 AgriSync. {t("All rights reserved. Built for Tamil Nadu farmers.", "அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை. தமிழ்நாடு விவசாயிகளுக்காக உருவாக்கப்பட்டது.")}
         </div>
       </div>
     </footer>
