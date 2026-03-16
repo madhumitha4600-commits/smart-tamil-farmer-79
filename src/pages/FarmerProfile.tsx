@@ -1,14 +1,18 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { User, Save, CheckCircle } from "lucide-react";
+import { User, Save, CheckCircle, Camera } from "lucide-react";
 import { motion } from "framer-motion";
 
 const FarmerProfile = () => {
   const { t } = useLanguage();
   const [saved, setSaved] = useState(false);
+  const [profilePic, setProfilePic] = useState<string | null>(() => {
+    try { return localStorage.getItem("farmer-profile-pic"); } catch { return null; }
+  });
+  const fileRef = useRef<HTMLInputElement>(null);
   const [profile, setProfile] = useState(() => {
     try { return JSON.parse(localStorage.getItem("farmer-profile") || "{}"); } catch { return {}; }
   });
@@ -16,6 +20,18 @@ const FarmerProfile = () => {
   const update = (field: string, value: string) => {
     setProfile((prev: any) => ({ ...prev, [field]: value }));
     setSaved(false);
+  };
+
+  const handleProfilePic = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const result = ev.target?.result as string;
+      setProfilePic(result);
+      localStorage.setItem("farmer-profile-pic", result);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSave = (e: React.FormEvent) => {
@@ -48,9 +64,24 @@ const FarmerProfile = () => {
       <div className="pt-20 pb-8 px-4">
         <div className="container mx-auto max-w-2xl">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mt-8 mb-8">
-            <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-              <User className="h-10 w-10 text-primary" />
+            {/* Profile Picture Upload */}
+            <div className="relative w-24 h-24 mx-auto mb-4 group cursor-pointer" onClick={() => fileRef.current?.click()}>
+              {profilePic ? (
+                <img src={profilePic} alt="Profile" className="w-24 h-24 rounded-full object-cover border-4 border-primary/30 shadow-lg" />
+              ) : (
+                <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center border-4 border-primary/20">
+                  <User className="h-12 w-12 text-primary" />
+                </div>
+              )}
+              <div className="absolute inset-0 rounded-full bg-primary/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <Camera className="h-6 w-6 text-primary-foreground" />
+              </div>
+              <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-primary rounded-full flex items-center justify-center shadow-md border-2 border-background">
+                <Camera className="h-3.5 w-3.5 text-primary-foreground" />
+              </div>
+              <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleProfilePic} />
             </div>
+            <p className="text-xs text-muted-foreground mb-2">{t("Tap to upload photo", "புகைப்படம் பதிவேற்ற தட்டவும்")}</p>
             <h1 className="text-3xl font-display font-bold text-foreground">{t("Farmer Profile", "விவசாயி சுயவிவரம்")}</h1>
             <p className="text-muted-foreground mt-2 text-sm">{t("Your details help us provide better recommendations.", "உங்கள் விவரங்கள் சிறந்த பரிந்துரைகளை வழங்க உதவுகின்றன.")}</p>
           </motion.div>
