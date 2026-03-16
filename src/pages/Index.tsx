@@ -31,12 +31,23 @@ function AnimatedCounter({ end, suffix = "", duration = 2000 }: { end: number; s
   return <span ref={ref}>{val}{suffix}</span>;
 }
 
+const moduleIcons: Record<string, string> = {
+  "Smart Farming Guide": "🌱",
+  "Disease Detection": "🔬",
+  "Weather Forecast": "🌤️",
+  "Fertilizer Guide": "🧪",
+  "Crop Recommendation": "🌾",
+  "Soil Health Card": "❤️",
+  "AI Crop Calendar": "📅",
+  "AI Voice Assistant": "🤖",
+};
+
 const modules = [
   { icon: Sprout, titleEn: "Smart Farming Guide", titleTa: "ஸ்மார்ட் விவசாய வழிகாட்டி", descEn: "Complete crop guidance from planting to harvest with expert tips.", descTa: "நடவு முதல் அறுவடை வரை முழுமையான பயிர் வழிகாட்டுதல்.", link: "/farming-guide", color: "from-primary/20 to-leaf/10" },
-  { icon: Bug, titleEn: "Disease Detection", titleTa: "நோய் கண்டறிதல்", descEn: "Upload leaf images for AI-powered disease analysis and treatment.", descTa: "AI நோய் பகுப்பாய்வுக்கு இலைப் படங்களை பதிவேற்றவும்.", link: "/disease-detection", color: "from-destructive/10 to-destructive/5" },
-  { icon: CloudSun, titleEn: "Weather Forecast", titleTa: "வானிலை முன்னறிவிப்பு", descEn: "Real-time weather with heat stress, ET₀ calculator & pest risk.", descTa: "வெப்ப அழுத்தம், ET₀ கால்குலேட்டர் & பூச்சி ஆபத்துடன் நிகழ்நேர வானிலை.", link: "/weather", color: "from-sky/15 to-sky/5" },
-  { icon: FlaskConical, titleEn: "Fertilizer Guide", titleTa: "உர வழிகாட்டி", descEn: "AI-powered NPK analysis with application schedules.", descTa: "பயன்பாட்டு அட்டவணைகளுடன் AI சக்தி NPK பகுப்பாய்வு.", link: "/fertilizer", color: "from-gold/15 to-gold/5" },
-  { icon: Leaf, titleEn: "Crop Recommendation", titleTa: "பயிர் பரிந்துரை", descEn: "7-parameter analysis for optimal crop selection with AI.", descTa: "AI உடன் உகந்த பயிர் தேர்வுக்கு 7 அளவுரு பகுப்பாய்வு.", link: "/crop-recommendation", color: "from-leaf/15 to-leaf/5" },
+  { icon: Bug, titleEn: "Disease Detection", titleTa: "நோய் கண்டறிதல்", descEn: "Upload leaf images for DenseNet deep learning disease analysis.", descTa: "DenseNet ஆழமான கற்றல் நோய் பகுப்பாய்வுக்கு இலைப் படங்களை பதிவேற்றவும்.", link: "/disease-detection", color: "from-destructive/10 to-destructive/5" },
+  { icon: CloudSun, titleEn: "Weather Forecast", titleTa: "வானிலை முன்னறிவிப்பு", descEn: "Real-time GPS weather with heat stress, ET₀ & pest risk analysis.", descTa: "வெப்ப அழுத்தம், ET₀ & பூச்சி ஆபத்துடன் நிகழ்நேர GPS வானிலை.", link: "/weather", color: "from-sky/15 to-sky/5" },
+  { icon: FlaskConical, titleEn: "Fertilizer Guide", titleTa: "உர வழிகாட்டி", descEn: "ML-powered NPK analysis with real-time prediction models.", descTa: "ML-சக்தி NPK பகுப்பாய்வு நிகழ்நேர கணிப்பு மாடல்கள்.", link: "/fertilizer", color: "from-gold/15 to-gold/5" },
+  { icon: Leaf, titleEn: "Crop Recommendation", titleTa: "பயிர் பரிந்துரை", descEn: "AI-powered crop selection with pictorial results for farmers.", descTa: "விவசாயிகளுக்கான படங்களுடன் AI பயிர் தேர்வு.", link: "/crop-recommendation", color: "from-leaf/15 to-leaf/5" },
   { icon: Heart, titleEn: "Soil Health Card", titleTa: "மண் ஆரோக்கிய அட்டை", descEn: "Generate government-style soil health score with AI analysis.", descTa: "AI பகுப்பாய்வுடன் அரசு பாணி மண் ஆரோக்கிய மதிப்பெண் உருவாக்கவும்.", link: "/soil-health", color: "from-earth/15 to-earth/5" },
   { icon: Calendar, titleEn: "AI Crop Calendar", titleTa: "AI பயிர் நாட்காட்டி", descEn: "Month-by-month visual farming calendar with costs & yield.", descTa: "செலவுகள் & மகசூலுடன் மாதம் வாரியான காட்சி விவசாய நாட்காட்டி.", link: "/crop-calendar", color: "from-primary/15 to-accent/10" },
   { icon: MessageCircle, titleEn: "AI Voice Assistant", titleTa: "AI குரல் உதவியாளர்", descEn: "Chat in Tamil, English, Hindi, Telugu with voice support.", descTa: "தமிழ், ஆங்கிலம், இந்தி, தெலுங்கில் குரல் ஆதரவுடன் அரட்டை.", link: "/chat", color: "from-primary/15 to-primary/5" },
@@ -119,12 +130,12 @@ const Index = () => {
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
             <Link to="/farming-guide">
-              <Button size="lg" className="text-lg px-8 py-6 rounded-full font-semibold shadow-lg hover:scale-105 transition-transform font-body">
+              <Button size="lg" className="text-lg px-8 py-6 rounded-full font-semibold shadow-xl hover:scale-105 transition-transform font-body bg-secondary text-secondary-foreground hover:bg-secondary/90">
                 {t("Explore 8 Modules", "8 தொகுதிகளை ஆராயுங்கள்")} <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
             <Link to="/chat">
-              <Button size="lg" variant="outline" className="text-lg px-8 py-6 rounded-full font-semibold glass-card text-primary-foreground border-primary-foreground/20 hover:bg-primary-foreground/10 font-body">
+              <Button size="lg" className="text-lg px-8 py-6 rounded-full font-semibold shadow-xl bg-primary-foreground text-primary hover:bg-primary-foreground/90 font-body">
                 <MessageCircle className="mr-2 h-5 w-5" /> {t("Talk to AI", "AI உடன் பேசுங்கள்")}
               </Button>
             </Link>
@@ -136,7 +147,7 @@ const Index = () => {
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 1, duration: 0.6 }}
-              className="absolute left-8 top-1/2 -translate-y-1/2 glass-card rounded-2xl p-4 text-left"
+              className="absolute left-8 top-1/2 -translate-y-1/2 glass-card rounded-2xl p-4 text-left animate-float"
             >
               <div className="text-xs text-primary-foreground/60 font-body">🌡️ {t("Temperature", "வெப்பநிலை")}</div>
               <div className="text-2xl font-display font-bold text-primary-foreground">32°C</div>
@@ -145,7 +156,8 @@ const Index = () => {
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 1.2, duration: 0.6 }}
-              className="absolute right-8 top-1/3 glass-card rounded-2xl p-4 text-left"
+              className="absolute right-8 top-1/3 glass-card rounded-2xl p-4 text-left animate-float"
+              style={{ animationDelay: "1s" }}
             >
               <div className="text-xs text-primary-foreground/60 font-body">💧 {t("Soil Moisture", "மண் ஈரப்பதம்")}</div>
               <div className="text-2xl font-display font-bold text-primary-foreground">67%</div>
@@ -154,7 +166,8 @@ const Index = () => {
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 1.4, duration: 0.6 }}
-              className="absolute right-12 bottom-1/3 glass-card rounded-2xl p-4 text-left"
+              className="absolute right-12 bottom-1/3 glass-card rounded-2xl p-4 text-left animate-float"
+              style={{ animationDelay: "2s" }}
             >
               <div className="text-xs text-primary-foreground/60 font-body">🤖 {t("AI Suggestion", "AI பரிந்துரை")}</div>
               <div className="text-sm font-display font-bold text-secondary">{t("Plant Rice", "அரிசி நடவும்")}</div>
@@ -227,24 +240,29 @@ const Index = () => {
             {modules.map((f, i) => (
               <motion.div
                 key={f.titleEn}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 40, rotateX: 10 }}
+                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.06 }}
+                transition={{ duration: 0.6, delay: i * 0.08, type: "spring", stiffness: 100 }}
+                whileHover={{ y: -10, scale: 1.04, rotateY: 3 }}
               >
                 <Link to={f.link}>
-                  <div className={`bg-gradient-to-br ${f.color} rounded-2xl p-6 border border-border feature-card-hover holographic-shimmer h-full group`}>
-                    <div className="w-12 h-12 rounded-xl bg-card/80 backdrop-blur flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-sm">
-                      <f.icon className="h-6 w-6 text-primary" />
+                  <div className={`bg-gradient-to-br ${f.color} rounded-2xl p-6 border border-border feature-card-hover holographic-shimmer h-full group relative overflow-hidden`}>
+                    {/* Decorative emoji */}
+                    <div className="absolute top-3 right-3 text-3xl opacity-15 group-hover:opacity-30 transition-opacity">
+                      {moduleIcons[f.titleEn] || "🌱"}
+                    </div>
+                    <div className="w-14 h-14 rounded-xl bg-card/80 backdrop-blur flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-3 transition-all shadow-md border border-border/50">
+                      <f.icon className="h-7 w-7 text-primary" />
                     </div>
                     <h3 className="text-base font-display font-bold mb-2 text-foreground group-hover:text-primary transition-colors">
                       {t(f.titleEn, f.titleTa)}
                     </h3>
-                    <p className="text-muted-foreground text-xs font-body leading-relaxed">
+                    <p className="text-muted-foreground text-xs font-body leading-relaxed mb-4">
                       {t(f.descEn, f.descTa)}
                     </p>
-                    <div className="mt-4 flex items-center gap-1 text-primary text-xs font-medium font-body opacity-0 group-hover:opacity-100 transition-opacity">
-                      {t("Explore", "ஆராயுங்கள்")} <ArrowRight className="h-3 w-3" />
+                    <div className="flex items-center gap-1.5 text-primary text-xs font-semibold font-body group-hover:gap-3 transition-all">
+                      {t("Explore", "ஆராயுங்கள்")} <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>
                 </Link>

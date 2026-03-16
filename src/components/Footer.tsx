@@ -1,5 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Link } from "react-router-dom";
+import { Facebook, Twitter, Instagram, Youtube } from "lucide-react";
+import agriLogo from "@/assets/agrisync-logo.png";
 
 const Footer = () => {
   const { t } = useLanguage();
@@ -9,8 +11,11 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-2">
-            <h3 className="text-2xl font-display font-bold mb-3 flex items-center gap-2">
-              <span>🌾</span> {t("AgriSync", "அக்ரிசிங்க்")}
+            <h3 className="text-2xl font-display font-bold mb-3 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-primary-foreground/15 border border-primary-foreground/20 flex items-center justify-center overflow-hidden p-0.5">
+                <img src={agriLogo} alt="AgriSync" className="w-full h-full object-contain" />
+              </div>
+              {t("AgriSync", "அக்ரிசிங்க்")}
             </h3>
             <p className="text-primary-foreground/80 text-sm font-body mb-6 max-w-md leading-relaxed">
               {t(
@@ -43,8 +48,15 @@ const Footer = () => {
             <p className="text-sm font-body text-primary-foreground/70">support@agrisync.com</p>
             <p className="text-sm font-body text-primary-foreground/70 mt-1">+91 98765 43210</p>
             <div className="flex gap-3 mt-4">
-              {["📘", "🐦", "📷", "📺"].map((emoji, i) => (
-                <span key={i} className="text-lg cursor-pointer hover:scale-125 transition-transform">{emoji}</span>
+              {[
+                { icon: Facebook, label: "Facebook" },
+                { icon: Twitter, label: "Twitter" },
+                { icon: Instagram, label: "Instagram" },
+                { icon: Youtube, label: "YouTube" },
+              ].map((social) => (
+                <button key={social.label} className="w-9 h-9 rounded-full bg-primary-foreground/10 hover:bg-primary-foreground/20 flex items-center justify-center transition-all hover:scale-110" aria-label={social.label}>
+                  <social.icon className="h-4 w-4 text-primary-foreground/80" />
+                </button>
               ))}
             </div>
           </div>

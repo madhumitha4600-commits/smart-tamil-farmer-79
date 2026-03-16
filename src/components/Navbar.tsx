@@ -3,6 +3,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Menu, X, User, Globe, MessageCircle } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import agriLogo from "@/assets/agrisync-logo.png";
 
 const Navbar = () => {
   const { t, toggleLang, lang } = useLanguage();
@@ -21,11 +22,13 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-card/90 backdrop-blur-xl border-b border-border/50 shadow-sm">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-primary/95 backdrop-blur-xl border-b border-primary-foreground/10 shadow-lg">
       <div className="container mx-auto px-4 flex items-center justify-between h-16">
-        <Link to="/" className="flex items-center gap-2 font-display font-bold text-xl text-primary">
-          <span className="text-2xl">🌾</span>
-          <span className="tracking-tight">{t("AgriSync", "அக்ரிசிங்க்")}</span>
+        <Link to="/" className="flex items-center gap-2.5 font-display font-bold text-xl text-primary-foreground">
+          <div className="w-9 h-9 rounded-lg bg-primary-foreground/15 border border-primary-foreground/20 flex items-center justify-center overflow-hidden p-0.5">
+            <img src={agriLogo} alt="AgriSync" className="w-full h-full object-contain" />
+          </div>
+          <span className="tracking-tight text-primary-foreground">{t("AgriSync", "அக்ரிசிங்க்")}</span>
         </Link>
 
         {/* Desktop nav */}
@@ -34,10 +37,10 @@ const Navbar = () => {
             <Link
               key={link.to}
               to={link.to}
-              className={`px-2.5 py-1.5 rounded-lg text-xs font-medium font-body transition-all duration-200 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium font-body transition-all duration-200 ${
                 location.pathname === link.to
-                  ? "bg-primary text-primary-foreground shadow-md"
-                  : "text-foreground hover:bg-accent hover:scale-105"
+                  ? "bg-primary-foreground text-primary shadow-md font-bold"
+                  : "text-primary-foreground/80 hover:bg-primary-foreground/15 hover:text-primary-foreground hover:scale-105"
               }`}
             >
               {link.label}
@@ -47,25 +50,25 @@ const Navbar = () => {
 
         <div className="flex items-center gap-2">
           <Link to="/chat">
-            <Button variant="outline" size="sm" className="gap-1 border-primary/30 text-primary hover:bg-primary hover:text-primary-foreground transition-all text-xs">
+            <Button size="sm" className="gap-1.5 bg-secondary text-secondary-foreground hover:bg-secondary/90 transition-all text-xs font-bold rounded-full px-4 shadow-md">
               <MessageCircle className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">{t("AI Chat", "AI அரட்டை")}</span>
             </Button>
           </Link>
 
-          <Button variant="outline" size="sm" onClick={toggleLang} className="gap-1 text-xs">
+          <Button size="sm" onClick={toggleLang} className="gap-1 text-xs bg-primary-foreground/15 text-primary-foreground hover:bg-primary-foreground/25 border-0 rounded-full">
             <Globe className="h-3.5 w-3.5" />
             {lang === "en" ? "தமிழ்" : "EN"}
           </Button>
 
           <Link to="/profile">
-            <Button variant="outline" size="icon" className="h-8 w-8">
+            <Button size="icon" className="h-8 w-8 bg-primary-foreground/15 text-primary-foreground hover:bg-primary-foreground/25 border-0 rounded-full">
               <User className="h-3.5 w-3.5" />
             </Button>
           </Link>
 
           <button
-            className="xl:hidden p-2 rounded-lg hover:bg-accent transition-colors"
+            className="xl:hidden p-2 rounded-lg text-primary-foreground hover:bg-primary-foreground/15 transition-colors"
             onClick={() => setOpen(!open)}
           >
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -75,7 +78,7 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       {open && (
-        <div className="xl:hidden bg-card/95 backdrop-blur-xl border-b border-border px-4 py-3 space-y-1 animate-fade-in-up">
+        <div className="xl:hidden bg-primary/98 backdrop-blur-xl border-b border-primary-foreground/10 px-4 py-3 space-y-1 animate-fade-in-up">
           {links.map((link) => (
             <Link
               key={link.to}
@@ -83,14 +86,14 @@ const Navbar = () => {
               onClick={() => setOpen(false)}
               className={`block px-3 py-2 rounded-lg text-sm font-medium font-body transition-colors ${
                 location.pathname === link.to
-                  ? "bg-primary text-primary-foreground"
-                  : "text-foreground hover:bg-accent"
+                  ? "bg-primary-foreground text-primary font-bold"
+                  : "text-primary-foreground/80 hover:bg-primary-foreground/15"
               }`}
             >
               {link.label}
             </Link>
           ))}
-          <Link to="/chat" onClick={() => setOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-medium text-primary hover:bg-accent">
+          <Link to="/chat" onClick={() => setOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-medium text-secondary hover:bg-primary-foreground/15">
             💬 {t("AI Chat Assistant", "AI அரட்டை உதவியாளர்")}
           </Link>
         </div>
