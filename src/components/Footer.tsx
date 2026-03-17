@@ -1,7 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Link } from "react-router-dom";
 import { Facebook, Twitter, Instagram, Youtube } from "lucide-react";
-import agriLogo from "@/assets/agrisync-logo.png";
+import ficcaLogo from "@/assets/ficca-logo.jpg";
 
 const Footer = () => {
   const { t } = useLanguage();
@@ -12,8 +12,8 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-2">
             <h3 className="text-2xl font-display font-bold mb-3 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-primary-foreground/15 border border-primary-foreground/20 flex items-center justify-center overflow-hidden p-0.5">
-                <img src={agriLogo} alt="AgriSync" className="w-full h-full object-contain" />
+              <div className="w-12 h-12 rounded-full bg-primary-foreground/15 border border-primary-foreground/20 flex items-center justify-center overflow-hidden">
+                <img src={ficcaLogo} alt="FICCA" className="w-full h-full object-cover rounded-full" />
               </div>
               {t("AgriSync", "அக்ரிசிங்க்")}
             </h3>

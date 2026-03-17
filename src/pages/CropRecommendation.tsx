@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { Sprout, Loader2, Bot, Leaf, TrendingUp, Award, BarChart3 } from "lucide-react";
+import { Sprout, Loader2, Leaf, Award, BarChart3 } from "lucide-react";
 import { motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import seedlingImg from "@/assets/seedling-growth.jpg";
@@ -33,13 +33,13 @@ const CropRecommendation = () => {
   const [parsedCrops, setParsedCrops] = useState<{ name: string; match: number; reason: string }[]>([]);
 
   const fields = [
-    { key: "nitrogen", label: t("Nitrogen (N)", "நைட்ரஜன் (N)"), min: 0, max: 140, unit: "kg/ha", color: "bg-primary" },
-    { key: "phosphorus", label: t("Phosphorus (P)", "பாஸ்பரஸ் (P)"), min: 0, max: 145, unit: "kg/ha", color: "bg-secondary" },
-    { key: "potassium", label: t("Potassium (K)", "பொட்டாசியம் (K)"), min: 0, max: 205, unit: "kg/ha", color: "bg-earth" },
-    { key: "temperature", label: t("Temperature", "வெப்பநிலை"), min: 10, max: 50, unit: "°C", color: "bg-destructive" },
-    { key: "humidity", label: t("Humidity", "ஈரப்பதம்"), min: 10, max: 100, unit: "%", color: "bg-sky" },
-    { key: "ph", label: t("Soil pH", "மண் pH"), min: 3, max: 10, unit: "", step: 0.1, color: "bg-gold" },
-    { key: "rainfall", label: t("Rainfall", "மழையளவு"), min: 0, max: 300, unit: "mm", color: "bg-leaf" },
+    { key: "nitrogen", label: t("Nitrogen (N)", "நைட்ரஜன் (N)"), min: 0, max: 140, unit: "kg/ha" },
+    { key: "phosphorus", label: t("Phosphorus (P)", "பாஸ்பரஸ் (P)"), min: 0, max: 145, unit: "kg/ha" },
+    { key: "potassium", label: t("Potassium (K)", "பொட்டாசியம் (K)"), min: 0, max: 205, unit: "kg/ha" },
+    { key: "temperature", label: t("Temperature", "வெப்பநிலை"), min: 10, max: 50, unit: "°C" },
+    { key: "humidity", label: t("Humidity", "ஈரப்பதம்"), min: 10, max: 100, unit: "%" },
+    { key: "ph", label: t("Soil pH", "மண் pH"), min: 3, max: 10, unit: "", step: 0.1 },
+    { key: "rainfall", label: t("Rainfall", "மழையளவு"), min: 0, max: 300, unit: "mm" },
   ];
 
   const handleSubmit = async () => {
@@ -63,17 +63,17 @@ IMPORTANT: Start your response with a JSON block in this exact format:
 \`\`\`
 
 Then provide detailed analysis:
-## 🏆 Top Recommended Crop
+## Top Recommended Crop
 Explain why the #1 crop is best for these exact conditions.
 
-## 📊 Detailed Analysis
+## Detailed Analysis
 For each recommended crop, explain:
 - Why it suits these conditions
 - Expected yield per hectare
 - Best planting season
 - Key growing tips for Tamil Nadu
 
-## 🌱 Growing Tips for Top Crop
+## Growing Tips for Top Crop
 Specific practical advice for Tamil Nadu farmers.`;
 
       const resp = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`, {
@@ -101,13 +101,9 @@ Specific practical advice for Tamil Nadu farmers.`;
         }
       }
 
-      // Parse JSON crops from result
       const jsonMatch = full.match(/```json\s*([\s\S]*?)```/);
       if (jsonMatch) {
-        try {
-          const crops = JSON.parse(jsonMatch[1]);
-          setParsedCrops(crops);
-        } catch {}
+        try { setParsedCrops(JSON.parse(jsonMatch[1])); } catch {}
       }
     } catch (e: any) {
       setResult(`Error: ${e.message}`);
@@ -116,7 +112,6 @@ Specific practical advice for Tamil Nadu farmers.`;
     }
   };
 
-  // Remove JSON block from displayed markdown
   const displayResult = result.replace(/```json[\s\S]*?```\n?/, "");
 
   return (
@@ -215,7 +210,6 @@ Specific practical advice for Tamil Nadu farmers.`;
             </motion.div>
           )}
 
-          {/* Detailed AI Analysis */}
           {displayResult && (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mt-8 bg-card border border-border rounded-2xl p-6 md:p-8 prose prose-sm max-w-none prose-headings:font-display prose-headings:text-foreground prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground">
               <ReactMarkdown>{displayResult}</ReactMarkdown>

@@ -1,14 +1,29 @@
 import { Link, useLocation } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Menu, X, User, Globe, MessageCircle } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import agriLogo from "@/assets/agrisync-logo.png";
+import ficcaLogo from "@/assets/ficca-logo.jpg";
 
 const Navbar = () => {
   const { t, toggleLang, lang } = useLanguage();
   const [open, setOpen] = useState(false);
   const location = useLocation();
+  const [profilePic, setProfilePic] = useState<string | null>(null);
+
+  useEffect(() => {
+    const updatePic = () => {
+      try { setProfilePic(localStorage.getItem("farmer-profile-pic")); } catch { setProfilePic(null); }
+    };
+    updatePic();
+    window.addEventListener("storage", updatePic);
+    // Custom event for same-tab updates
+    window.addEventListener("profile-pic-updated", updatePic);
+    return () => {
+      window.removeEventListener("storage", updatePic);
+      window.removeEventListener("profile-pic-updated", updatePic);
+    };
+  }, []);
 
   const links = [
     { to: "/", label: t("Home", "முகப்பு") },
@@ -25,8 +40,8 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-primary/95 backdrop-blur-xl border-b border-primary-foreground/10 shadow-lg">
       <div className="container mx-auto px-4 flex items-center justify-between h-16">
         <Link to="/" className="flex items-center gap-2.5 font-display font-bold text-xl text-primary-foreground">
-          <div className="w-9 h-9 rounded-lg bg-primary-foreground/15 border border-primary-foreground/20 flex items-center justify-center overflow-hidden p-0.5">
-            <img src={agriLogo} alt="AgriSync" className="w-full h-full object-contain" />
+          <div className="w-10 h-10 rounded-full bg-primary-foreground/15 border border-primary-foreground/20 flex items-center justify-center overflow-hidden">
+            <img src={ficcaLogo} alt="FICCA" className="w-full h-full object-cover rounded-full" />
           </div>
           <span className="tracking-tight text-primary-foreground">{t("AgriSync", "அக்ரிசிங்க்")}</span>
         </Link>
@@ -62,8 +77,12 @@ const Navbar = () => {
           </Button>
 
           <Link to="/profile">
-            <Button size="icon" className="h-8 w-8 bg-primary-foreground/15 text-primary-foreground hover:bg-primary-foreground/25 border-0 rounded-full">
-              <User className="h-3.5 w-3.5" />
+            <Button size="icon" className="h-8 w-8 bg-primary-foreground/15 text-primary-foreground hover:bg-primary-foreground/25 border-0 rounded-full overflow-hidden p-0">
+              {profilePic ? (
+                <img src={profilePic} alt="Profile" className="w-full h-full object-cover rounded-full" />
+              ) : (
+                <User className="h-3.5 w-3.5" />
+              )}
             </Button>
           </Link>
 
@@ -78,7 +97,7 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       {open && (
-        <div className="xl:hidden bg-primary/98 backdrop-blur-xl border-b border-primary-foreground/10 px-4 py-3 space-y-1 animate-fade-in-up">
+        <div className="xl:hidden bg-primary/98 backdrop-blur-xl border-b border-primary-foreground/10 px-4 py-3 space-y-1 animate-fade-in">
           {links.map((link) => (
             <Link
               key={link.to}
@@ -94,7 +113,7 @@ const Navbar = () => {
             </Link>
           ))}
           <Link to="/chat" onClick={() => setOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-medium text-secondary hover:bg-primary-foreground/15">
-            💬 {t("AI Chat Assistant", "AI அரட்டை உதவியாளர்")}
+            {t("AI Chat Assistant", "AI அரட்டை உதவியாளர்")}
           </Link>
         </div>
       )}
