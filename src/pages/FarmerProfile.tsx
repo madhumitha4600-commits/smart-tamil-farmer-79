@@ -30,6 +30,8 @@ const FarmerProfile = () => {
       const result = ev.target?.result as string;
       setProfilePic(result);
       localStorage.setItem("farmer-profile-pic", result);
+      // Dispatch custom event so Navbar updates immediately
+      window.dispatchEvent(new Event("profile-pic-updated"));
     };
     reader.readAsDataURL(file);
   };

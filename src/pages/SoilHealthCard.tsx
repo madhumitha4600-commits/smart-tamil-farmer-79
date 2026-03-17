@@ -14,26 +14,70 @@ interface SoilResult {
   priorityAction: string;
 }
 
-function GaugeDial({ value, max, label, color }: { value: number; max: number; label: string; color: string }) {
+function GaugeDial({ value, max, label, color, unit }: { value: number; max: number; label: string; color: string; unit?: string }) {
   const pct = Math.min(value / max, 1);
   const circumference = 2 * Math.PI * 40;
   const offset = circumference * (1 - pct);
+  const status = pct >= 0.7 ? "Good" : pct >= 0.4 ? "Medium" : "Low";
+  const statusColor = pct >= 0.7 ? "text-primary" : pct >= 0.4 ? "text-secondary" : "text-destructive";
 
   return (
     <div className="flex flex-col items-center">
-      <svg width="100" height="100" viewBox="0 0 100 100">
-        <circle cx="50" cy="50" r="40" fill="none" stroke="hsl(var(--muted))" strokeWidth="8" />
+      <svg width="110" height="110" viewBox="0 0 110 110">
+        <circle cx="55" cy="55" r="40" fill="none" stroke="hsl(var(--muted))" strokeWidth="8" />
         <circle
-          cx="50" cy="50" r="40" fill="none" stroke={color} strokeWidth="8"
+          cx="55" cy="55" r="40" fill="none" stroke={color} strokeWidth="8"
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={offset}
           className="gauge-circle"
-          transform="rotate(-90 50 50)"
+          transform="rotate(-90 55 55)"
         />
-        <text x="50" y="50" textAnchor="middle" dy="0.35em" className="font-body text-sm font-bold fill-foreground">{value}</text>
+        <text x="55" y="50" textAnchor="middle" dy="0.35em" className="font-body text-sm font-bold fill-foreground">{value}</text>
+        {unit && <text x="55" y="68" textAnchor="middle" className="font-body text-[8px] fill-muted-foreground">{unit}</text>}
       </svg>
-      <span className="text-xs font-body text-muted-foreground mt-1">{label}</span>
+      <span className="text-xs font-bold text-foreground mt-1">{label}</span>
+      <span className={`text-[10px] font-medium ${statusColor}`}>{status}</span>
+    </div>
+  );
+}
+
+function PieChart({ data }: { data: { label: string; value: number; color: string }[] }) {
+  const total = data.reduce((s, d) => s + d.value, 0);
+  if (total === 0) return null;
+  let cumulative = 0;
+  const size = 140;
+  const cx = size / 2, cy = size / 2, r = 55;
+
+  const slices = data.map((d) => {
+    const pct = d.value / total;
+    const startAngle = cumulative * 2 * Math.PI;
+    cumulative += pct;
+    const endAngle = cumulative * 2 * Math.PI;
+    const largeArc = pct > 0.5 ? 1 : 0;
+    const x1 = cx + r * Math.cos(startAngle - Math.PI / 2);
+    const y1 = cy + r * Math.sin(startAngle - Math.PI / 2);
+    const x2 = cx + r * Math.cos(endAngle - Math.PI / 2);
+    const y2 = cy + r * Math.sin(endAngle - Math.PI / 2);
+    const path = `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} Z`;
+    return { ...d, path, pct };
+  });
+
+  return (
+    <div className="flex flex-col items-center gap-3">
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+        {slices.map((s, i) => (
+          <path key={i} d={s.path} fill={s.color} stroke="hsl(var(--background))" strokeWidth="2" />
+        ))}
+      </svg>
+      <div className="flex gap-3 flex-wrap justify-center">
+        {slices.map((s, i) => (
+          <div key={i} className="flex items-center gap-1.5">
+            <div className="w-2.5 h-2.5 rounded-sm flex-shrink-0" style={{ backgroundColor: s.color }} />
+            <span className="text-[10px] text-muted-foreground">{s.label} ({Math.round(s.pct * 100)}%)</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -79,17 +123,13 @@ const SoilHealthCard = () => {
     if (recs.length === 0) recs.push(t("Your soil is in excellent condition!", "உங்கள் மண் சிறந்த நிலையில் உள்ளது!"));
 
     const priority = recs[0];
-
     setResult({ score, grade, recommendations: recs.slice(0, 3), priorityAction: priority });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      calculateScore();
-      setLoading(false);
-    }, 1500);
+    setTimeout(() => { calculateScore(); setLoading(false); }, 1500);
   };
 
   const askAI = async () => {
@@ -99,13 +139,12 @@ const SoilHealthCard = () => {
       const prompt = `Analyze this soil data for ${form.crop || 'general farming'} in Tamil Nadu:
 N=${form.nitrogen}kg/ha, P=${form.phosphorus}kg/ha, K=${form.potassium}kg/ha, pH=${form.ph}, Organic Matter=${form.organicMatter}%, EC=${form.ec}dS/m.
 Give 3 specific improvement recommendations and 1 priority action. Be concise and practical.`;
-
       const resp = await supabase.functions.invoke('chat', {
         body: { messages: [{ role: "user", content: prompt }], lang: "en" },
       });
       if (resp.error) throw resp.error;
       setAiAdvice(typeof resp.data === 'string' ? resp.data : JSON.stringify(resp.data));
-    } catch (e: any) {
+    } catch {
       setAiAdvice("AI analysis unavailable. Using local calculations.");
     } finally {
       setAiLoading(false);
@@ -119,6 +158,10 @@ Give 3 specific improvement recommendations and 1 priority action. Be concise an
     return "text-destructive";
   };
 
+  const n = parseFloat(form.nitrogen) || 0;
+  const p = parseFloat(form.phosphorus) || 0;
+  const k = parseFloat(form.potassium) || 0;
+
   return (
     <div className="min-h-screen font-body">
       <Navbar />
@@ -128,7 +171,7 @@ Give 3 specific improvement recommendations and 1 priority action. Be concise an
             <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-3xl md:text-5xl font-display font-extrabold text-primary-foreground mb-3">
               {t("Soil Health Score Card", "மண் ஆரோக்கிய மதிப்பெண் அட்டை")}
             </motion.h1>
-            <p className="text-primary-foreground/80 font-body">{t("AI-powered soil analysis with visual gauges", "காட்சி அளவீடுகளுடன் AI மண் பகுப்பாய்வு")}</p>
+            <p className="text-primary-foreground/80 font-body">{t("Visual soil analysis with gauges and charts", "அளவீடுகள் மற்றும் வரைபடங்களுடன் காட்சி மண் பகுப்பாய்வு")}</p>
           </div>
         </div>
       </section>
@@ -154,15 +197,9 @@ Give 3 specific improvement recommendations and 1 priority action. Be concise an
               ].map(f => (
                 <div key={f.key}>
                   <label className="block text-xs font-medium text-foreground mb-1">{f.label}</label>
-                  <input
-                    type={f.type}
-                    step="any"
-                    value={(form as any)[f.key]}
-                    onChange={e => update(f.key, e.target.value)}
-                    placeholder={f.placeholder}
+                  <input type={f.type} step="any" value={(form as any)[f.key]} onChange={e => update(f.key, e.target.value)} placeholder={f.placeholder}
                     className="w-full p-2.5 rounded-xl border border-border bg-background text-foreground text-sm focus:ring-2 focus:ring-primary/50 transition-all"
-                    required={f.key !== "farmerName" && f.key !== "village" && f.key !== "crop"}
-                  />
+                    required={f.key !== "farmerName" && f.key !== "village" && f.key !== "crop"} />
                 </div>
               ))}
             </div>
@@ -173,33 +210,32 @@ Give 3 specific improvement recommendations and 1 priority action. Be concise an
           </form>
 
           {result && (
-            <motion.div
-              ref={printRef}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mt-8 space-y-6"
-            >
+            <motion.div ref={printRef} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mt-8 space-y-6">
               {/* Header */}
               <div className="bg-gradient-to-r from-primary to-canopy rounded-2xl p-6 text-primary-foreground text-center">
                 <h3 className="font-display text-2xl font-bold mb-1">{t("Soil Health Card", "மண் ஆரோக்கிய அட்டை")}</h3>
-                {form.farmerName && <p className="text-sm opacity-80">{form.farmerName} • {form.village}</p>}
+                {form.farmerName && <p className="text-sm opacity-80">{form.farmerName} — {form.village}</p>}
                 {form.crop && <p className="text-xs opacity-60 mt-1">{t("Crop:", "பயிர்:")} {form.crop}</p>}
               </div>
 
-              {/* Score */}
-              <div className="bg-card border border-border rounded-2xl p-8 text-center">
-                <div className="text-6xl font-display font-extrabold mb-2">
-                  <span className={gradeColor(result.grade)}>{result.score}</span>
-                  <span className="text-muted-foreground text-2xl">/100</span>
+              {/* Score + Pie Chart */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-card border border-border rounded-2xl p-8 text-center">
+                  <div className="text-6xl font-display font-extrabold mb-2">
+                    <span className={gradeColor(result.grade)}>{result.score}</span>
+                    <span className="text-muted-foreground text-2xl">/100</span>
+                  </div>
+                  <div className={`text-3xl font-display font-bold ${gradeColor(result.grade)}`}>{t("Grade:", "தரம்:")} {result.grade}</div>
+                  <div className="w-full bg-muted rounded-full h-3 max-w-md mx-auto mt-4">
+                    <motion.div initial={{ width: 0 }} animate={{ width: `${result.score}%` }} transition={{ duration: 1.5, ease: "easeOut" }} className="bg-primary h-3 rounded-full" />
+                  </div>
                 </div>
-                <div className={`text-3xl font-display font-bold ${gradeColor(result.grade)}`}>{t("Grade:", "தரம்:")} {result.grade}</div>
-                <div className="w-full bg-muted rounded-full h-3 max-w-md mx-auto mt-4">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${result.score}%` }}
-                    transition={{ duration: 1.5, ease: "easeOut" }}
-                    className="bg-primary h-3 rounded-full"
-                  />
+                <div className="bg-card border border-border rounded-2xl p-6 flex items-center justify-center">
+                  <PieChart data={[
+                    { label: "N", value: n, color: "hsl(152, 45%, 28%)" },
+                    { label: "P", value: p, color: "hsl(38, 75%, 52%)" },
+                    { label: "K", value: k, color: "hsl(25, 35%, 35%)" },
+                  ]} />
                 </div>
               </div>
 
@@ -207,12 +243,12 @@ Give 3 specific improvement recommendations and 1 priority action. Be concise an
               <div className="bg-card border border-border rounded-2xl p-6">
                 <h4 className="font-display font-bold text-lg mb-4 text-center">{t("Nutrient Analysis", "ஊட்டச்சத்து பகுப்பாய்வு")}</h4>
                 <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
-                  <GaugeDial value={parseFloat(form.nitrogen) || 0} max={140} label="N" color="hsl(152, 45%, 22%)" />
-                  <GaugeDial value={parseFloat(form.phosphorus) || 0} max={145} label="P" color="hsl(38, 75%, 52%)" />
-                  <GaugeDial value={parseFloat(form.potassium) || 0} max={205} label="K" color="hsl(25, 35%, 28%)" />
+                  <GaugeDial value={n} max={140} label="N" color="hsl(152, 45%, 22%)" unit="kg/ha" />
+                  <GaugeDial value={p} max={145} label="P" color="hsl(38, 75%, 52%)" unit="kg/ha" />
+                  <GaugeDial value={k} max={205} label="K" color="hsl(25, 35%, 28%)" unit="kg/ha" />
                   <GaugeDial value={parseFloat(form.ph) || 0} max={14} label="pH" color="hsl(205, 55%, 48%)" />
-                  <GaugeDial value={parseFloat(form.organicMatter) || 0} max={10} label="OM%" color="hsl(110, 40%, 38%)" />
-                  <GaugeDial value={parseFloat(form.ec) || 0} max={10} label="EC" color="hsl(0, 72%, 51%)" />
+                  <GaugeDial value={parseFloat(form.organicMatter) || 0} max={10} label="OM%" color="hsl(110, 40%, 38%)" unit="%" />
+                  <GaugeDial value={parseFloat(form.ec) || 0} max={10} label="EC" color="hsl(0, 72%, 51%)" unit="dS/m" />
                 </div>
               </div>
 
@@ -231,7 +267,7 @@ Give 3 specific improvement recommendations and 1 priority action. Be concise an
                   ))}
                 </div>
                 <div className="mt-4 bg-secondary/10 border border-secondary/30 rounded-xl p-4">
-                  <p className="text-xs font-medium text-secondary-foreground">⚡ {t("Priority Action:", "முன்னுரிமை நடவடிக்கை:")} {result.priorityAction}</p>
+                  <p className="text-xs font-medium text-secondary-foreground">{t("Priority Action:", "முன்னுரிமை நடவடிக்கை:")} {result.priorityAction}</p>
                 </div>
               </div>
 
